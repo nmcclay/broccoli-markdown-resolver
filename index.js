@@ -6,6 +6,7 @@ const frontmatter = require('front-matter');
 const mkdirp = require('mkdirp');
 const fs = require('fs');
 const path = require('path');
+const showdown = require('showdown');
 
 MarkdownResolver.prototype = Object.create(Plugin.prototype);
 MarkdownResolver.prototype.constructor = MarkdownResolver;
@@ -48,6 +49,7 @@ MarkdownResolver.prototype.readDirectory = function(srcPath, allFiles) {
       content = frontmatter(content);
       entry.content = content.body;
       entry.attributes = content.attributes;
+      entry.html = this.convertMarkdownToHTML(entry.content);
       allFiles.push(entry);
     }
 
@@ -58,28 +60,27 @@ MarkdownResolver.prototype.readDirectory = function(srcPath, allFiles) {
     return existingTreeNode ? [...tree] : [...tree, entry];
 
   }, []);
-}
+};
 
 MarkdownResolver.prototype.relativePath = function(srcDir) {
   let relPath = srcDir.replace(this.options.basePath, '');
   return relPath.replace(/^\/|\/$/g, '');
-}
+};
+
+MarkdownResolver.prototype.convertMarkdownToHTML = function(markdown) {
+	const converter = new showdown.Converter();
+	return converter.makeHtml(markdown);
+};
 
 MarkdownResolver.prototype.build = function() {
-  let output = { files: [] };
+  let files = [];
 
-  output.trees = Array.prototype.reduce.call(this._inputNodes, (trees, srcDir) => {
-    trees[this.relativePath(srcDir)] = this.readDirectory(srcDir, output.files);
+  Array.prototype.reduce.call(this._inputNodes, (trees, srcDir) => {
+    trees[this.relativePath(srcDir)] = this.readDirectory(srcDir, files);
     return trees;
   }, {});
 
-  let outputBuffer = `
-export let trees = ${JSON.stringify(output.trees, null, 2)};
-export let files = ${JSON.stringify(output.files, null, 2)};
-export default {
-  trees, files
-};
-  `;
+  let outputBuffer = `export default ${JSON.stringify(files, null, 2)};`;
 
   mkdirp.sync(path.join(this.outputPath, path.dirname(this.options.outputFile)));
   fs.writeFileSync(path.join(this.outputPath, this.options.outputFile), outputBuffer);
