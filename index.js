@@ -67,7 +67,13 @@ MarkdownResolver.prototype.relativePath = function(srcDir) {
 };
 
 MarkdownResolver.prototype.convertMarkdownToHTML = function(markdown) {
-	const converter = new showdown.Converter();
+	const converter = new showdown.Converter({
+		parseImgDimensions: true,
+		simplifiedAutoLink: true,
+		excludeTrailingPunctuationFromURLs: true,
+		tasklists: true,
+		openLinksInNewWindow: true
+	});
 	return converter.makeHtml(markdown);
 };
 
