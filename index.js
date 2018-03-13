@@ -45,10 +45,10 @@ MarkdownResolver.prototype.readDirectory = function(srcPath, allFiles) {
     if (isDirectory) {
       entry.children = this.readDirectory(path.join(srcPath, file), allFiles);
     } else {
-      let content = fs.readFileSync(path.join(srcPath, file), { encoding: 'utf8' });
-      content = frontmatter(content);
+      let file = fs.readFileSync(path.join(srcPath, file), { encoding: 'utf8' });
+      let content = frontmatter(content);
       entry.attributes = content.attributes;
-      entry.html = this.convertMarkdownToHTML(entry.content);
+      entry.html = this.convertMarkdownToHTML(content.body);
       allFiles.push(entry);
     }
 
