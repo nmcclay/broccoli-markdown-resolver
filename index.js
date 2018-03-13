@@ -47,7 +47,6 @@ MarkdownResolver.prototype.readDirectory = function(srcPath, allFiles) {
     } else {
       let content = fs.readFileSync(path.join(srcPath, file), { encoding: 'utf8' });
       content = frontmatter(content);
-      entry.content = content.body;
       entry.attributes = content.attributes;
       entry.html = this.convertMarkdownToHTML(entry.content);
       allFiles.push(entry);
