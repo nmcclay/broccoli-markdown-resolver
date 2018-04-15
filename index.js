@@ -72,7 +72,9 @@ MarkdownResolver.prototype.convertMarkdownToHTML = function(markdown) {
 		simplifiedAutoLink: true,
 		excludeTrailingPunctuationFromURLs: true,
 		tasklists: true,
-		openLinksInNewWindow: true
+		openLinksInNewWindow: true,
+		tables: true,
+		backslashEscapesHTMLTags: true
 	});
 	return converter.makeHtml(markdown);
 };
