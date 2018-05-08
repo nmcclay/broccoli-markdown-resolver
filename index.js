@@ -74,7 +74,8 @@ MarkdownResolver.prototype.convertMarkdownToHTML = function(markdown) {
 		tasklists: true,
 		openLinksInNewWindow: true,
 		tables: true,
-		backslashEscapesHTMLTags: true
+		backslashEscapesHTMLTags: true,
+		splitAdjacentBlockquotes: true
 	});
 	return converter.makeHtml(markdown);
 };
